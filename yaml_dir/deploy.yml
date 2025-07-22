@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-cursoJS
+  namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-cursoJS
+  template:
+    metadata:
+      labels:
+        app: backend-cursoJS
+    spec:
+      containers:
+      - name: backend-cursoJS
+        image: backend-cursojs:latest
+        ports:
+        - containerPort: 3000
+        imagePullPolicy: Always
+      imagePullSecrets:
+      - name: registry-images
