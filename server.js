@@ -1,23 +1,19 @@
 const express = require('express');
+const userRouter = require('./routers/userRouter')
 const app = express();
 const PORT = 5000;
 
-// Rota POST simples
-app.post('/', (req, res) => {
- 
-  return res.json({
-    message: 'Server is running',
-    author:"Clenz"
-  });
-});
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use('/api/user', userRouter) //camadas de redirecionamentos pra rotas ali dentro
 
 
 // Rota GET simples
 app.get('/', (req, res) => {
     
   return res.json({
-    message: 'Server is running',
-    author:"Clenz"
+    message: 'get ta rodando fininho',
+    author:"blablabla"
   });
 });
 
