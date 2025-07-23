@@ -1,16 +1,13 @@
 const express = require('express');
+const userRouter = require('./routers/userRouter')
 const app = express();
 const PORT = 5000;
 
-// Rota POST simples
-app.post('/', (req, res) => {
- 
-  return res.json({
-    message: 'Server is running',
-    author:"Clenz"
-  });
-});
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
+app.use('/api/user', userRouter) 
+//quando vier alguma requisicao, ele vai abrir as portas para o usuário
 
 // Rota GET simples
 app.get('/', (req, res) => {
