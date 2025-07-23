@@ -1,16 +1,12 @@
 const express = require('express');
+const userRouter = require('./routers/userRouter.js');
 const app = express();
 const PORT = 5000;
 
-// Rota POST simples
-app.post('/', (req, res) => {
- 
-  return res.json({
-    message: 'Server is running',
-    author:"Clenz"
-  });
-});
+app.use(express.json());
+app.use(express.urlencoded({ extended: true}));
 
+app.use('/api/user', userRouter)
 
 // Rota GET simples
 app.get('/', (req, res) => {
