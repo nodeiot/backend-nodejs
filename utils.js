@@ -12,4 +12,22 @@ const generateToken = (user) => {
         }
     )
 };
-module.exports = {generateToken};
+
+const isAuth = (req, res) => {
+   
+    const token = req?.headers?.authorization || req?.headers?.Authorization
+    if (authorization) {
+        const token = authorization.slice(7, authorization.length)
+        jwt.verify(token, segredo, (err, decode) => {
+            if (err) {
+                res.status(401).send({ message: 'Token inválido' });
+            } else {
+                req.user = decode;
+                next();
+            }
+        })
+    } else {
+        return res.send({ message: "Sem token" })
+    }
+};
+module.exports = { generateToken, isAuth };
