@@ -43,7 +43,7 @@ userRouter.post("/login",expressAsyncHandler(async (req, res) => {
 
       const token = generateToken(user)
       
-      return res.status(200).send({ user: {...result, token}, message: `Usuário logado com sucesso!` });
+      return res.status(200).send({ user: {...result, token}, message: `Usuário logado com sucesso! Te lembra de colocar o token na header usando "Bearer" primeiro` });
     } catch (error) {
       return res.status(400).send(error);
     }
