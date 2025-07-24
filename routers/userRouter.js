@@ -40,9 +40,6 @@ userRouter.post('/login', expressAsyncHandler(async (req, res) => {
         if (!user) return res.status(400).send({ message: 'Usuário não encontrado' })
 
         if (user.password != password) return res.status(400).send({ message: "Senha inválida" })
-        if (!user) return res.status(400).send({ message: 'Usuário não encontrado' })
-
-        if (user.password != password) return res.status(400).send({ message: "Senha inválida" })
 
         const { password: passwordRemoved, ...result } = user
 
@@ -54,6 +51,7 @@ userRouter.post('/login', expressAsyncHandler(async (req, res) => {
     }
 
 }))
+
 
 userRouter.post('/update', isAuth, expressAsyncHandler(async (req, res) => {
     try {
