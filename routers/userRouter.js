@@ -1,28 +1,18 @@
 const { Router } = require("express");
 const expressAsyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
-const { generateToken } = require("../utils");
+const { generateToken, isAuth } = require("../utils");
 
 const userRouter = Router();
 
-userRouter.post(
-  "/register",
-  expressAsyncHandler(async (req, res) => {
+userRouter.post( "/register", expressAsyncHandler(async (req, res) => {
+    
     try {
       const { email, password, passwordConfirm, name } = req.body;
-      if (!email || !password)
-        return res
-          .status(400)
-          .send({ message: `Email e senha são obrigatórios` }); //verificar requisicao se veio completa
+      if (!email || !password) return res.status(400).send({ message: `Email e senha são obrigatórios` }); //verificar requisicao se veio completa
 
-      if (!email.includes("@"))
-        return res.status(400).send({ message: `O e-mail deve ser válido` });
-      if (password != passwordConfirm)
-        return res
-          .status(400)
-          .send({
-            message: `A senha e a confirmacao da senha precisam ser as mesmas`,
-          });
+      if (!email.includes("@")) return res.status(400).send({ message: `O e-mail deve ser válido` });
+      if (password != passwordConfirm) return res.status(400).send({message: `A senha e a confirmacao da senha precisam ser as mesmas`});
 
       const user = await User.create({
         email,
@@ -30,18 +20,14 @@ userRouter.post(
         name,
       });
 
-      return res
-        .status(200)
-        .send({ message: `Usuário ${user.name} criado com sucesso` });
+      return res.status(200).send({ message: `Usuário ${user.name} criado com sucesso` });
     } catch (error) {
       return res.status(400).send(error);
     }
   })
 );
 
-userRouter.post(
-"/login",
-  expressAsyncHandler(async (req, res) => {
+userRouter.post("/login",expressAsyncHandler(async (req, res) => {
     try {
       const { email, password } = req.body;
       if (!email || !password) return res.status(400).send({ message: `Email e senha são obrigatórios` });
@@ -54,12 +40,31 @@ userRouter.post(
       if (user.password != password) return res.status(400).send({ message: `Senha inválida` });
 
       const { password: passwordRemoved, ...result } = user;
+
       const token = generateToken(user)
+      
       return res.status(200).send({ user: {...result, token}, message: `Usuário logado com sucesso!` });
     } catch (error) {
       return res.status(400).send(error);
     }
   })
 );
+
+userRouter.post('/update', isAuth, expressAsyncHandler(async (req, res) => {
+  try{
+    const {_id} = req.user
+    const {newName} = req.body
+
+
+    const user = await User.findById(_id)
+    user.name = newName
+    const userUpdated = await user.save()
+
+    console.log(user)
+    return res.status(200).send({message: `Nome do usuário (${user.name}) atualizado`})
+  } catch(error){
+    return res.status(400).send({message: error})
+  }
+}))
 
 module.exports = userRouter;
