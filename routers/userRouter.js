@@ -33,11 +33,19 @@ userRouter.post('/register', expressAsyncHandler(async (req, res) => {
 userRouter.post('/login', expressAsyncHandler(async (req, res) => {
     try {
         const { email, password } = req.body
+    try {
+        const { email, password } = req.body
 
         if (!email || !password) return res.status(400).send({ message: 'Email e senha são obrigatórios' })
 
         const user = await User.findOne({ email: email }).lean()
+        if (!email || !password) return res.status(400).send({ message: 'Email e senha são obrigatórios' })
 
+        const user = await User.findOne({ email: email }).lean()
+
+        if (!user) return res.status(400).send({ message: 'Usuário não encontrado' })
+
+        if (user.password != password) return res.status(400).send({ message: "Senha inválida" })
         if (!user) return res.status(400).send({ message: 'Usuário não encontrado' })
 
         if (user.password != password) return res.status(400).send({ message: "Senha inválida" })
