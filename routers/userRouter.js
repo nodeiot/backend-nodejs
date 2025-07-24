@@ -1,63 +1,77 @@
 const { Router } = require("express");
 const expressAsyncHandler = require("express-async-handler");
-const userRouter = Router();
+const User = require("../models/userModel.js");
+const { generateToken } = require("../utils");
 
-let users = [];
+const userRouter = Router();
 
 userRouter.post(
   "/register",
   expressAsyncHandler(async (req, res) => {
-    const { email, password, passwordConfirm, name } = req.body;
+    try {
+      const { email, password, passwordConfirm, name } = req.body;
+      if (!email || !password)
+        return res
+          .status(400)
+          .send({ message: "Email e senha são obrigatórios" });
 
-    if (!email || !password)
+      if (!email.includes("@"))
+        return res.status(400).send({ message: "Email não é válido" });
+      if (password != passwordConfirm)
+        return res
+          .status(400)
+          .send({ message: "Senha e confirmação da senha são diferentes" });
+
+      const user = await User.create({
+        email,
+        password,
+        name,
+      });
+
       return res
-        .status(400)
-        .send({ message: "E-mail e senha são obrigatórios!" });
-
-    if (!email.includes("@"))
-      return res.status(400).send({ message: `E-mail ${email} não é válido!` });
-
-    if (password != passwordConfirm)
-      return res
-        .status(400)
-        .send({ message: "Senha e confimação são diferentes!" });
-
-    if (users.some((item) => item.email == email))
-      return res
-        .status(400)
-        .send({ message: `O E-mail ${email} já está cadastrado!` });
-
-    users.push({ email, password, name });
-
-    return res.status(200).send({
-      message: `Usuário de ${name} com E-mail ${email} foi criado com sucesso!`,
-    });
+        .status(200)
+        .send({ message: `Usuário ${user.name} criado com sucesso` });
+    } catch (error) {
+      if (error.code === 11000) {
+        const { email } = error.keyValue;
+        return res.status(400).send({
+          message: `E-mail ${email} já cadastrado!`,
+        });
+      }
+      return res.status(400).send(error);
+    }
   })
 );
 
 userRouter.post(
   "/login",
   expressAsyncHandler(async (req, res) => {
-    const { email, password } = req.body;
+    try {
+      const { email, password } = req.body;
 
-    if (!email || !password)
-      return res
-        .status(400)
-        .send({ message: `E-mail e senha são obrigatórios` });
+      if (!email || !password)
+        return res
+          .status(400)
+          .send({ message: "Email e senha são obrigatórios" });
 
-    const user = users.find((item) => item.email == email);
+      const user = await User.findOne({ email: email }).lean();
 
-    if (!user)
-      return res.status(400).send({ message: `Usuário não encontrado` });
+      if (!user)
+        return res.status(400).send({ message: "Usuário não encontrado" });
 
-    if (user.password != password)
-      return res.status(400).send({ message: `Senha inválida!` });
+      if (user.password != password)
+        return res.status(400).send({ message: "Senha inválida" });
 
-    const { password: passwordRemoved, ...result } = user;
-
-    return res
-      .status(200)
-      .send({ user: result, message: `Login realizado com sucesso!` });
+      const { password: passwordRemoved, ...result } = user;
+      const token = generateToken(user);
+      console.log(token);
+      return res.status(200).send({
+        user: { ...result, token },
+        message: "Login realizado com sucesso",
+      });
+    } catch (error) {
+      return res.status(400).send({ message: "Houve um erro!" });
+    }
   })
 );
 
