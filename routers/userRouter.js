@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const expressAsyncHandler = require('express-async-handler');
 const User = require('../models/userModels');
-const { generateToken } = require('../utils');
+const { generateToken, isAuth } = require('../utils');
 
 const userRouter = Router();
 
@@ -19,11 +19,10 @@ userRouter.post('/register', expressAsyncHandler(async (req, res) => {
         const user = await User.create({ email, password, name });
         
         return res.status(200).send({ message: `Usuário ${user.name} criado com sucesso` });
-
+ 
     } catch (error) {
         return res.status(400).send({ message: 'Erro ao criar usuário' });
     }
-
    
 
 }));
@@ -44,7 +43,7 @@ userRouter.post('/login', expressAsyncHandler(async (req, res) => {
 
     const token = generateToken(user);
 
-    return res.status(200).send({ user: { ...result, token }, message: 'Usuário logado com sucesso', user: result });
+    return res.status(200).send({ user: { ...result, token }, message: 'Usuário logado com sucesso' });
 
    } catch (error) {
     return res.status(400).send({ message: 'Erro ao logar usuário' });
@@ -52,5 +51,19 @@ userRouter.post('/login', expressAsyncHandler(async (req, res) => {
 
 }))
 
+userRouter.post('/update', isAuth, expressAsyncHandler(async (req, res) => {
+    try {
+        const { _id } = req.user;
+        const newName = req.body.name;
+        const user = await User.findById(_id);
+        user.name = newName;
+        const userUpdated = await user.save();
+        console.log(newName);
+        return res.status(200).send({  message: 'Usuário atualizado com sucesso'});
+
+    } catch (error) {
+        return res.status(401).send({ message: 'Erro ao logar usuário' });
+    }
+}))
 module.exports = userRouter;
 
