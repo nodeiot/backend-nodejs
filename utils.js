@@ -14,4 +14,24 @@ const generateToken = (user) => {
     }
   );
 };
+
+const isAuth = (req, res) => {
+  const authorization =
+    req?.headers?.authorization || req?.headers?.authorization;
+  if (authorization) {
+    const token = authorization.slice(7, authorization.length);
+    jwt.verify(token, segredo, (err, decode) => {
+      if (err) {
+        req.status(401).send({ message: "token inválido" });
+      } else {
+        req.user = decode;
+        next();
+      }
+    });
+  } else {
+    return res.send({ message: "Sem Token" });
+  }
+};
+
 module.exports = { generateToken };
+module.exports = { isAuth };

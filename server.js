@@ -20,6 +20,7 @@ mongoose
 //Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+//Rota
 app.use("/api/user", userRouter);
 
 // Rota GET simples
