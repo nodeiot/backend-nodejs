@@ -2,7 +2,7 @@ const Router = require("express");
 const expressAsyncHandler = require("express-async-handler");
 
 const userSchema = require("../models/userModel");
-const { generateToken } = require("../utils");
+const { generateToken, auth } = require("../utils");
 
 const userRouter = Router();
 
@@ -70,5 +70,22 @@ userRouter.post(
     }
   })
 );
+
+userRouter.post("/update", auth, expressAsyncHandler(async (req, res) => {
+  try{
+
+    const {_id} = req.user
+    const {newName} = req.body
+    const user = await userSchema.findById(_id);
+    console.log(user)
+    user.name = newName;
+    const userUpdate = await user.save();
+    return res.status(200).send({message: `Usuário ${userUpdate} atualizado com sucesso`})
+
+  }  catch (error) {
+    return res.status(400).send(error);
+  }
+  
+}))
 
 module.exports = userRouter;

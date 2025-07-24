@@ -10,9 +10,29 @@ const generateToken = (user) => {
     },
     secret,
     {
-      expiresIn: '1d',
+      expiresIn: "1d",
     }
   );
 };
+req ={
 
-module.exports = {generateToken}
+}
+
+const auth = (req, res, next) => {
+  const authToken = req.headers?.authorization || req.headers?.Authorization;
+  if (authToken) {
+    const token = authToken.slice(7, authToken.length)
+    jwt.verify(token, secret, (err, decode) => {
+      if(err){
+        req.status(401).send({message: "Token Invalido"})
+      } else{ 
+        req.user = decode;
+        next()
+      }
+    })
+  } else {
+    return res.send({ message: "sem token" });
+  }
+};
+
+module.exports = { generateToken, auth };
