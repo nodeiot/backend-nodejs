@@ -1,7 +1,7 @@
 const { Router } = require('express')
 const expressAsyncHandler = require('express-async-handler');
 const User = require('../models/userModel')
-const {generateToken} = require('../utils');
+const {generateToken, isAuth} = require('../utils');
 
 const userRouter = Router();
 
@@ -49,6 +49,23 @@ userRouter.post('/login' , expressAsyncHandler(async (req, res)=>{
 } catch (error) {
         return res.status(400).send(error)
 }
+}))
+
+userRouter.post('/update', isAuth, expressAsyncHandler(async (req, res)=>{
+    try{
+
+        const {_id} = req.user
+        const {newName} = req.body
+        const user = await User.findById(_id)
+        user.name = newName
+        const userUpdated = await user.save()
+        return res.status(200).send({message: "Usuario atualizado com sucesso"})
+
+    } catch (error) {
+
+        return res.status(400).send({message: error})
+    }
+    
 }))
 
 module.exports = userRouter 
