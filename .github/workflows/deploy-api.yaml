@@ -52,4 +52,4 @@ jobs:
 
       - name: apply to EKS
         run: |
-          kubectl apply -f yaml_dir/
+          kubectl apply -f ./yaml_dir/
