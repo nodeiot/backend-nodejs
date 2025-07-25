@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rotas
 app.use('/api/user', userRouter);
-app.use('/api/user', movieRouter);
+app.use('/api/movies', movieRouter);
 
 app.get('/', (req, res) => {
   return res.json({
