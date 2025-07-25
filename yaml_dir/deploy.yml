@@ -15,9 +15,9 @@ spec:
     spec:
       containers:
       - name: backend-cursoJS
-        image: backend-cursojs:latest
+        image: 868477837551.dkr.ecr.us-east-1.amazonaws.com/nodeiot/cursojs:latest
         ports:
-        - containerPort: 3000
+        - containerPort: 5000
         imagePullPolicy: Always
       imagePullSecrets:
       - name: registry-images
