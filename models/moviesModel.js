@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const moviesModel = new Schema (
 {   userId: { type: Schema.Types.ObjectId, ref: 'User'},
     movieName: {type: String, require: true,},
-    year: {type: Date, require: true,},
+    year: {type: Number, require: true,},
     director: {type: String},
     studio: {type: String}
 },
