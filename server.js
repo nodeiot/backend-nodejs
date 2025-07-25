@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const userRouter = require('./routers/userRouter.js');
+const gamesRouer = require('./routers/gamesRouter.js');
 
 const app = express();
 const PORT = 5000;
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rotas
 app.use('/api/user', userRouter);
+app.use('/api/games', gamesRouer);
 
 app.get('/', (req, res) => {
   return res.json({
