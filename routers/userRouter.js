@@ -2,7 +2,6 @@ const { Router } = require("express");
 const expressAsyncHandler = require("express-async-handler");
 const User = require("../models/userModel.js");
 const { generateToken, isAuth } = require("../utils");
-
 const userRouter = Router();
 
 userRouter.post(

@@ -4,6 +4,7 @@ const expressAsyncHandler = require("express-async-handler");
 const Music = require("../models/musicModel.js");
 const musicRouter = Router();
 
+
 //Rota POST
 musicRouter.post(
   "/",
@@ -97,11 +98,9 @@ musicRouter.put(
   })
 );
 
-module.exports = musicRouter;
-
 //Rota DELETE
 musicRouter.delete(
-  "id",
+  "/:id",
   isAuth,
   expressAsyncHandler(async (req, res) => {
     const { id } = req.params;
@@ -120,10 +119,10 @@ musicRouter.delete(
 
     await Music.findByIdAndDelete(id);
 
-    if (music.createdBy.toString() !== req.user._id) {
-      return res.status(200).send({
+    return res.status(200).send({
         message: "Música deletada com sucesso!",
       });
-    }
   })
 );
+
+module.exports = musicRouter;
