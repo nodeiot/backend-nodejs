@@ -8,6 +8,11 @@ const musicSchema = new mongoose.Schema(
     album: String,
     genre: String,
     year: Number,
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      require: true,
+    },
   },
   {
     timestamps: true,

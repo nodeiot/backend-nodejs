@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const expressAsyncHandler = require("express-async-handler");
 const User = require("../models/userModel.js");
-const { generateToken } = require("../utils");
+const { generateToken, isAuth } = require("../utils");
 
 const userRouter = Router();
 
@@ -71,6 +71,25 @@ userRouter.post(
       });
     } catch (error) {
       return res.status(400).send({ message: "Houve um erro!" });
+    }
+  })
+);
+
+userRouter.post(
+  "/update",
+  isAuth,
+  expressAsyncHandler(async (req, res) => {
+    try {
+      const { _id } = req.user;
+      const { newName } = req.body;
+      const user = await User.findById(_id);
+      user.name = newName;
+      const userUpdated = await user.save();
+      return res
+        .status(200)
+        .send({ message: "Usuário atualizado com sucesso!" });
+    } catch (error) {
+      return res.status(400).send({ message: error });
     }
   })
 );
