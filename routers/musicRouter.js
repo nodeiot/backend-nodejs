@@ -2,7 +2,6 @@ const { Router } = require("express");
 const { isAuth } = require("../utils.js");
 const expressAsyncHandler = require("express-async-handler");
 const Music = require("../models/musicModel.js");
-const e = require("express");
 const musicRouter = Router();
 
 //Rota POST
