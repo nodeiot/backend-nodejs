@@ -52,4 +52,6 @@ jobs:
 
       - name: apply to EKS
         run: |
-          kubectl apply -f ./yaml_dir/
+          kubectl set image deployment/backend-cursojs backend-cursojs=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/nodeiot/cursojs:latest -n development
+          kubectl rollout restart deployment backend-cursojs -n development
+          kubectl rollout status deployment/backend-cursojs -n development
