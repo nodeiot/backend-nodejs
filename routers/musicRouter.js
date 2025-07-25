@@ -2,6 +2,7 @@ const { Router } = require("express");
 const { isAuth } = require("../utils.js");
 const expressAsyncHandler = require("express-async-handler");
 const Music = require("../models/musicModel.js");
+const e = require("express");
 const musicRouter = Router();
 
 //Rota POST
@@ -80,11 +81,9 @@ musicRouter.put(
     }
 
     if (music.createdBy.toString() !== req.user._id) {
-      return res
-        .status(403)
-        .send({
-          message: "Você não possui permissão para editar essa música!",
-        });
+      return res.status(403).send({
+        message: "Você não possui permissão para editar essa música!",
+      });
     }
 
     music.title = title;
@@ -100,3 +99,32 @@ musicRouter.put(
 );
 
 module.exports = musicRouter;
+
+//Rota DELETE
+musicRouter.delete(
+  "id",
+  isAuth,
+  expressAsyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const music = await Music.findById(id);
+
+    if (!music) {
+      return res.status(404).send({ message: "Música não encontrada!" });
+    }
+
+    if (music.createdBy.toString() !== req.user._id) {
+      return res.status(403).send({
+        message: "Você não possui permissão para deletar essa música!",
+      });
+    }
+
+    await Music.findByIdAndDelete(id);
+
+    if (music.createdBy.toString() !== req.user._id) {
+      return res.status(200).send({
+        message: "Música deletada com sucesso!",
+      });
+    }
+  })
+);
