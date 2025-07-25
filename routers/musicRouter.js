@@ -1,11 +1,11 @@
-const { Router } = require("express");
+const express = require("express");
 const { isAuth } = require("../utils.js");
 const expressAsyncHandler = require("express-async-handler");
 const Music = require("../models/musicModel.js");
-const e = require("express");
-const musicRouter = Router();
 
-//Rota POST
+const musicRouter = express.Router();
+
+// Rota POST
 musicRouter.post(
   "/",
   isAuth,
@@ -27,14 +27,14 @@ musicRouter.post(
         createdBy: req.user._id,
       });
 
-      return res.status(200).send({
-        message: `Musica ${title} adicionada com sucesso!`,
-      });
+      return res
+        .status(200)
+        .send({ message: `Musica ${title} adicionada com sucesso!` });
     } catch (error) {
       if (error.code === 11000) {
         const { title, artist } = error.keyValue;
         return res.status(400).send({
-          message: `Música ${title} do(a) artista ${artist} já cadastrado!`,
+          message: `Música ${title} do(a) artista ${artist} já cadastrada!`,
         });
       }
       return res.status(400).send(error);
@@ -42,7 +42,7 @@ musicRouter.post(
   })
 );
 
-//Rota Get
+// Rota GET
 musicRouter.get(
   "/",
   isAuth,
@@ -61,7 +61,7 @@ musicRouter.get(
   })
 );
 
-//Rota PUT
+// Rota PUT
 musicRouter.put(
   "/:id",
   isAuth,
@@ -74,6 +74,7 @@ musicRouter.put(
         .status(400)
         .send({ message: "Título e artista são obrigatórios!" });
     }
+
     const music = await Music.findById(id);
 
     if (!music) {
@@ -98,11 +99,9 @@ musicRouter.put(
   })
 );
 
-module.exports = musicRouter;
-
-//Rota DELETE
+// Rota DELETE
 musicRouter.delete(
-  "id",
+  "/:id",
   isAuth,
   expressAsyncHandler(async (req, res) => {
     const { id } = req.params;
@@ -121,10 +120,10 @@ musicRouter.delete(
 
     await Music.findByIdAndDelete(id);
 
-    if (music.createdBy.toString() !== req.user._id) {
-      return res.status(200).send({
-        message: "Música deletada com sucesso!",
-      });
-    }
+    return res.status(200).send({
+      message: "Música deletada com sucesso!",
+    });
   })
 );
+
+module.exports = musicRouter;
