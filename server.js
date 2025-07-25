@@ -1,6 +1,8 @@
 const express = require("express");
-const userRouter = require("./routers/userRouter.js");
 const mongoose = require("mongoose");
+const userRouter = require("./routers/userRouter.js");
+const gamesRouter = require("./routers/gamesRouter.js");
+
 const app = express();
 const PORT = 5000;
 
@@ -17,13 +19,14 @@ mongoose
   .then(() => console.log("✅ Conectado ao MongoDB"))
   .catch((err) => console.error("❌ Erro ao conectar ao MongoDB:", err));
 
-//Middlewares
+// Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-//Rota
-app.use("/api/user", userRouter);
 
-// Rota GET simples
+// Rotas
+app.use("/api/user", userRouter);
+app.use("/api/games", gamesRouter);
+
 app.get("/", (req, res) => {
   return res.json({
     message: "Server is running",
@@ -31,7 +34,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// Iniciando o servidor
+// Iniciar servidor
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
   console.log(`📡 Acesse: http://localhost:${PORT}`);
