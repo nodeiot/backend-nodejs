@@ -28,12 +28,12 @@ app.use("/api/music", musicRouter);
 
 app.get("/", (req, res) => {
   return res.json({
-    message: "Server is running",
-    author: "Felipe",
+    message: 'Server is running',
+    author: "Clenz"
   });
 });
 
-// Iniciando o servidor
+// Iniciar servidor
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
   console.log(`📡 Acesse: http://localhost:${PORT}`);
