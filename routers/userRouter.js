@@ -66,5 +66,4 @@ userRouter.post('/update', isAuth, expressAsyncHandler(async (req, res) => {
     }
 }))
 
-
 module.exports = userRouter
