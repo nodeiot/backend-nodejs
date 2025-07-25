@@ -1,38 +1,22 @@
 const { Router } = require('express')
 const expressAsyncHandler = require('express-async-handler');
 const Movie = require('../models/moviesModel');
-const { generateToken, isAuth } = require('../utils');
+const { isAuth } = require('../utils');
 
 const movieRouter = Router();
 
-movieRouter.post('/update', isAuth, option, expressAsyncHandler(async (req, res) => {
+movieRouter.post('/update', isAuth, expressAsyncHandler(async (req, res) => {
     try{
-        
-        // 1 = nome 2 = ano 3 = diretor 4 = estudio, seletor pra alterar
-        const {_id} = req.body
-        if (req.body === Number) 
 
-        
-        switch(option){
-            case 1: 
-                const {newName} = req.body
-                break;
-            case 2: 
+        const {_id} = req.user
+        const {movieId, director} = req.body   
+           
 
-                break;
-            case 3: 
+        const movie = await Movie.findById(movieId)
+        if (movie.userId.toString() != _id) return res.status(400).send({ message: "Voce nao criou esse filme!" })
 
-                break;
-            
-            case 4: 
+        movie.director = director
 
-                break; 
-        }
-        
-
-        const movie = await Movie.findById(_id)
-
-        movie.name = newName
         const movieUpdated = await movie.save();
 
         return res.status(200).send({ message: `Filme atualizado com sucesso!` })
